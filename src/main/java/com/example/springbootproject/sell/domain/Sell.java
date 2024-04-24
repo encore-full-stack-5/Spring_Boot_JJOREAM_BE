@@ -1,6 +1,7 @@
 package com.example.springbootproject.sell.domain;
 
 import com.example.springbootproject.auth.domain.User;
+import com.example.springbootproject.product.domain.Product;
 import com.example.springbootproject.size.domain.Size;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,22 +23,22 @@ public class Sell {
     @Column(name = "SELL_ID")
     private Long id;
 
-    @JoinColumn(name = "USER_ID")
-    @OneToOne
-    private User user;
-
     @JoinColumn(name = "SIZE_ID")
     @ManyToOne
     private Size size;
 
-    @Column(name = "PRICE")
+    @JoinColumn(name = "USER_ID")
+    @OneToOne
+    private User user;
+
+    @Column(name = "SELL_PRICE")
     private Long price;
 
-    @Column(name = "CREATED_AT")
+    @Column(name = "SELL_CREATED_AT")
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(name = "MATCH_YN")
+    @Column(name = "SELL_MATCH_YN")
     private Boolean matchYn;
 
 }
