@@ -38,7 +38,7 @@ public class Sell {
     @Setter
     private Boolean matchYn;
 
-//    @Column(name = "END_AT")
-//    private LocalDateTime endAt;
+    @Column(name = "END_AT")
+    private LocalDateTime endAt;
 
 }
