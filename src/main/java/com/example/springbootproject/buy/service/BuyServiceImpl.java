@@ -80,26 +80,25 @@ public class BuyServiceImpl implements BuyService {
 
 
     @Override
-    public void savePurchase(Long productId, String sizeValue, Long minPrice, BuyRequest buyRequest) {
+    public void savePurchase(Long productId, String sizeValue, Long minPrice, BuyRequest buyRequest, Long userId) {
         // 구매 요청서 저장
-        Long userId = buyRequest.userId();
         Optional<User> userById = authRepository.findById(userId);
-        User user = userById.orElseThrow(() -> new AuthException(AuthErrorCode.USER_NOT_FOUND));
+        User user = userById.orElseThrow(() -> new BuyException(BuyErrorCode.USER_NOT_FOUND));
         Optional<Product> productById = productRepository.findById(productId);
-        Product product = productById.orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
+        Product product = productById.orElseThrow(() -> new BuyException(BuyErrorCode.PRODUCT_NOT_FOUND));
         Size getSize = sizeRepository.findBySizeValueAndProductId(sizeValue,productId);
 //        sizeRepository.save(size); // DB에 저장을 해놔야 뒤에 buyRepository에서 문제가 없다.
         Long price = buyRequest.price();
         // 즉시 구매가 보다 작으면 즉시 구매가로 보여줌 @프론트
+        if (price > minPrice) price = minPrice;
         Integer duration = buyRequest.duration();
         Buy buy = new Buy(null, user, getSize, price, LocalDateTime.now(), true, LocalDateTime.now().plusDays(duration));
         buyRepository.save(buy);
 //        point 차감
 //         1. 내 포인트 잔액을 가져온다.
-//        List<PointHistory> balanceByUserId = pointRepository.findAllByUserIdOrderByIdDesc(userId);
-//        if (balanceByUserId.isEmpty()) throw new  BuyException(BuyErrorCode.NO_POINT);
-//        Long balance = balanceByUserId.get(0).getBalance();
-        Long balance = 500000L;
+        List<PointHistory> balanceByUserId = pointRepository.findAllByUserIdOrderByIdDesc(userId);
+        if (balanceByUserId.isEmpty()) throw new  BuyException(BuyErrorCode.NO_POINT);
+        Long balance = balanceByUserId.get(0).getBalance();
         if (balance < price) throw new BuyException(BuyErrorCode.NO_POINT);
         // 2. 새로운 포인트 내역을 만든다.
         Long newBalance = balance - price; // 포인트 차감
@@ -137,10 +136,10 @@ public class BuyServiceImpl implements BuyService {
 
 
         // point 차감
-//        List<PointHistory> balanceByUserId = pointRepository.findAllByUserIdOrderByIdDesc(userId);
-//        if (balanceByUserId.isEmpty()) throw new AuthException(AuthErrorCode.NO_POINT);
-//        Long balance = balanceByUserId.get(0).getBalance();
-        Long balance = 500000L;
+        List<PointHistory> balanceByUserId = pointRepository.findAllByUserIdOrderByIdDesc(userId);
+        if (balanceByUserId.isEmpty()) throw new AuthException(AuthErrorCode.NO_POINT);
+        Long balance = balanceByUserId.get(0).getBalance();
+//        Long balance = 500000L;
         if (balance < minPrice) throw new  BuyException(BuyErrorCode.NO_POINT);
         // 2. 새로운 포인트 내역을 만든다.
         Long newBalance = balance - minPrice; // 포인트 차감
