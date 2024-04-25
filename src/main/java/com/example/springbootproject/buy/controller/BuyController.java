@@ -7,6 +7,8 @@ import com.example.springbootproject.auth.excrption.AuthException;
 import com.example.springbootproject.auth.service.AuthService;
 import com.example.springbootproject.buy.dto.request.BuyRequest;
 import com.example.springbootproject.buy.dto.response.MinPricePerSize;
+import com.example.springbootproject.buy.exception.BuyErrorCode;
+import com.example.springbootproject.buy.exception.BuyException;
 import com.example.springbootproject.buy.service.BuyService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +37,11 @@ public class BuyController {
 
     // 구매 버튼 누르고 사이즈별 가격나올 때 사용
 //,@RequestHeader("Authorization") String bearerToken
-    @GetMapping("/productdetail/{productId}")
-    public List<MinPricePerSize> getMinPricePerSize(@PathVariable("productId") Long productId
-            ) {
+    @GetMapping("/productdetail/buy/{productId}") // sell과 URL 구분을 위해 buy 를 붙임
+    public List<MinPricePerSize> getMinPricePerSize(@PathVariable("productId") Long productId,
+            @RequestHeader("Authorization") String bearerToken) {
         // token 인증 필요
-//        if(bearerToken.isEmpty()) throw new AuthException(AuthErrorCode.PERMISSION_DENIED);
+        if(bearerToken.isEmpty()) throw new BuyException(BuyErrorCode.PERMISSION_DENIED);
         // 최소 가격 가져오기
         return buyService.findMinPricePerSize(productId);
     }
@@ -51,11 +53,14 @@ public class BuyController {
     public void askForPurchase(@PathVariable("productId") Long productId,
                                @RequestParam("size") String sizeValue,
                                @RequestParam("minprice") Long minPrice,
-                               @RequestBody BuyRequest buyRequest
+                               @RequestBody BuyRequest buyRequest,
+                               @RequestHeader("Authorization") String bearerToken
                                ) {
         // minPrice : front 에서 form data로 쏴줌, URL에 안 들어감
         // userId 는 token 사용
-        buyService.savePurchase(productId, sizeValue, minPrice, buyRequest);
+        TokenInfo tokenInfo = jwtTokenUtils.parseToken(bearerToken.substring(7));
+        Long userId = tokenInfo.id();
+        buyService.savePurchase(productId, sizeValue, minPrice, buyRequest, userId);
 
     }
 
@@ -65,7 +70,9 @@ public class BuyController {
     public void buyNow(@PathVariable("productId") Long productId,
                        @RequestParam("size") String sizeValue,
                        @RequestParam("minprice") Long minPrice,
-                       @RequestBody Long userId) {
+                       @RequestHeader("Authorization") String bearerToken) {
+        TokenInfo tokenInfo = jwtTokenUtils.parseToken(bearerToken.substring(7));
+        Long userId = tokenInfo.id();
         buyService.buyNow(productId, sizeValue, minPrice, userId);
     }
 
