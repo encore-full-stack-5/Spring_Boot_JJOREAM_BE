@@ -61,5 +61,4 @@ public class AuthController {
         if(bearerToken.isEmpty()) throw new AuthException(AuthErrorCode.PERMISSION_DENIED);
         return  jwtTokenUtils.parseToken(bearerToken.substring(7));
     }
-
 }
