@@ -15,21 +15,14 @@ import com.example.springbootproject.orderHistory.repository.OrderHistoryReposit
 import com.example.springbootproject.pointHistory.domain.PointHistory;
 import com.example.springbootproject.pointHistory.repository.PointRepository;
 import com.example.springbootproject.product.domain.Product;
-import com.example.springbootproject.product.exception.ProductErrorCode;
-import com.example.springbootproject.product.exception.ProductException;
 import com.example.springbootproject.product.repository.ProductRepository;
 import com.example.springbootproject.sell.domain.Sell;
 import com.example.springbootproject.sell.repository.SellRepository;
 import com.example.springbootproject.size.domain.Size;
-import com.example.springbootproject.size.exception.SizeErrorCode;
-import com.example.springbootproject.size.exception.SizeException;
 import com.example.springbootproject.size.repository.SizeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -60,7 +53,7 @@ public class BuyServiceImpl implements BuyService {
     @Override
     public List<MinPricePerSize> findMinPricePerSize(Long productId) {
         List<MinPricePerSize> sizeList = new ArrayList<>();
-        List<Size> byProductId = sizeRepository.findAllByProduct_Id(productId);
+        List<Size> byProductId = sizeRepository.findAllByProductId(productId);
         for (int i = 0; i < byProductId.size(); i++ ) {
             Size sizeObject = byProductId.get(i);
             // size entity 에서 size_value를 받는다.
@@ -140,7 +133,7 @@ public class BuyServiceImpl implements BuyService {
         if (balanceByUserId.isEmpty()) throw new AuthException(AuthErrorCode.NO_POINT);
         Long balance = balanceByUserId.get(0).getBalance();
 //        Long balance = 500000L;
-        if (balance < minPrice) throw new  BuyException(BuyErrorCode.NO_POINT);
+        if (balance < minPrice) throw new BuyException(BuyErrorCode.NO_POINT);
         // 2. 새로운 포인트 내역을 만든다.
         Long newBalance = balance - minPrice; // 포인트 차감
         PointHistory pointHistory = new PointHistory(null

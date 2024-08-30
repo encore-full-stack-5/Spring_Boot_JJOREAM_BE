@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record OrderHistoryResponse(String productName, Long productPrice , String productSize, boolean isSell, LocalDateTime createdAt) {
+public record OrderHistoryResponse(String productName, Long productPrice , String productSize, Boolean isSell, LocalDateTime createdAt) {
 
 
 

@@ -3,9 +3,6 @@ package com.example.springbootproject.sell.service;
 import com.example.springbootproject.auth.domain.User;
 import com.example.springbootproject.auth.repository.AuthRepository;
 import com.example.springbootproject.buy.domain.Buy;
-import com.example.springbootproject.buy.dto.response.MinPricePerSize;
-import com.example.springbootproject.buy.exception.BuyErrorCode;
-import com.example.springbootproject.buy.exception.BuyException;
 import com.example.springbootproject.buy.repository.BuyRepository;
 import com.example.springbootproject.orderHistory.domain.OrderHistory;
 import com.example.springbootproject.orderHistory.repository.OrderHistoryRepository;
@@ -44,7 +41,7 @@ public class SellServiceImpl implements SellService {
     @Override
     public List<MaxPricePerSize> findMaxPricePerSize(Long productId) {
         List<MaxPricePerSize> sizeList = new ArrayList<>();
-        List<Size> byProductId = sizeRepository.findAllByProduct_Id(productId);
+        List<Size> byProductId = sizeRepository.findAllByProductId(productId);
         for (int i = 0; i < byProductId.size(); i++ ) {
             Size sizeObject = byProductId.get(i);
             // size entity 에서 size_value를 받는다.

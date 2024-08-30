@@ -35,5 +35,4 @@ public class Buy {
     @Column(name = "END_AT")
     private LocalDateTime endAt;
 
-
 }
