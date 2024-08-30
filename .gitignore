@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
+=======
+
+### Ignore YAML files
+*.yaml
+*.yml
+>>>>>>> cf32cc7897adfa09383b80bef428caefd096070f

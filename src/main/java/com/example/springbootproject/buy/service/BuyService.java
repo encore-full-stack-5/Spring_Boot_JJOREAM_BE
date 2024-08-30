@@ -2,8 +2,6 @@ package com.example.springbootproject.buy.service;
 
 import com.example.springbootproject.buy.dto.request.BuyRequest;
 import com.example.springbootproject.buy.dto.response.MinPricePerSize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
